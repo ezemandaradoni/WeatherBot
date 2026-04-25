@@ -4,18 +4,12 @@ Monorepo para bots de alertas meteorologicas por Telegram.
 
 ## Estructura
 
-- `SnowBot/`: alertas de nieve
-- `RainBot/`: alertas de lluvia
+- `SnowBot/`: logica de alertas de nieve
+- `RainBot/`: logica de alertas de lluvia en Brasil
+- `src/`: arranque del worker unico y utilidades compartidas
 
-## Objetivo
+## Deploy actual
 
-Mantener cada bot aislado para deploy y configuracion, pero con una estructura que permita compartir codigo comun mas adelante si hace falta.
+Por ahora el deploy de Render esta pensado solo para `RainBot`, usando [render.yaml](C:\Users\Ezequiel\Documents\Codex\WeatherBot\render.yaml) en la raiz con `rootDir: RainBot`.
 
-## Render
-
-El deploy del monorepo se controla desde `render.yaml` en la raiz.
-
-- `SnowBot` usa `rootDir: SnowBot`
-- `RainBot` usa `rootDir: RainBot`
-
-Esto permite que ambos servicios vivan en el mismo repo de GitHub y se desplieguen por separado en Render.
+`SnowBot` queda dentro del monorepo y se puede volver a desplegar despues, pero durante el viaje la configuracion activa apunta solo al bot de lluvia.

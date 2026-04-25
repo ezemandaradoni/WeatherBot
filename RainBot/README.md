@@ -1,11 +1,17 @@
 # Bot de alerta de lluvia por Telegram
 
-Este proyecto revisa si esta lloviendo en:
+Este proyecto revisa condiciones de lluvia en:
 
 - Buzios
 - Ilha Grande
 
-Cuando detecta que **empieza** a llover en una ubicacion, manda un mensaje de Telegram y evita repetirlo mientras la lluvia siga activa.
+Manda mensajes de Telegram para:
+
+- lluvia anunciada para manana a las `10:00`
+- lluvia anunciada para manana a las `22:00`
+- lluvia prevista dentro de la proxima hora
+- alertas oficiales importantes
+- lluvia actual, indicando cuando se estima que pare
 
 Ejemplo de alerta:
 
@@ -21,19 +27,20 @@ Report time: 2026-04-25T08:00
 
 ## Como funciona
 
-1. Consulta el clima actual en WeatherAPI.
-2. Revisa la condicion actual, el codigo meteorologico y la precipitacion actual.
-3. Si una ubicacion pasa de "sin lluvia" a "con lluvia", envia un mensaje por Telegram.
-4. Guarda el ultimo estado en `data/state.json`.
+1. Consulta `forecast.json` de WeatherAPI con pronostico por hora y alertas.
+2. Revisa Buzios e Ilha Grande.
+3. Detecta eventos de lluvia por franja horaria, proximidad, lluvia actual y alertas importantes.
+4. Guarda estado para no repetir mensajes innecesarios.
 
 ## Estructura
 
-La carpeta `src/` esta separada para que despues podamos compartir piezas entre bots sin rehacer la logica:
+La logica propia de lluvia vive en:
 
 - `alerts/`: reglas de deteccion y mensajes
-- `services/`: integraciones con WeatherAPI y Telegram
-- `state-store.js`: persistencia simple del ultimo estado
-- `config.js` y `locations.js`: configuracion y ubicaciones monitoreadas
+- `locations.js`: ubicaciones monitoreadas
+- `bot.js`: flujo principal del bot
+
+La infraestructura compartida para lluvia y nieve vive en `WeatherBot/src/shared/`.
 
 ## Requisitos
 
@@ -51,8 +58,8 @@ CHECK_INTERVAL_MINUTES=15
 DATA_DIR=./data
 
 WEATHER_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TELEGRAM_BOT_TOKEN=123456789:AAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TELEGRAM_CHAT_ID=123456789
+RAIN_TELEGRAM_BOT_TOKEN=123456789:AAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+RAIN_TELEGRAM_CHAT_ID=123456789
 ```
 
 ## Ejecutar
@@ -75,31 +82,20 @@ Modo continuo:
 node src/index.js
 ```
 
-## Desplegar en Render
+## Render
 
-En el monorepo, la configuracion de Render vive en [render.yaml](C:\Users\Ezequiel\Documents\Codex\WeatherBot\render.yaml) y este bot se despliega con `rootDir: RainBot`.
+Este bot es el deploy activo del monorepo por ahora. En Render se usa el `render.yaml` de la raiz con `rootDir: RainBot`.
 
-### Pasos
-
-1. Sube este proyecto a GitHub.
-2. En Render, entra a **New +** > **Blueprint**.
-3. Conecta el repo `WeatherBot`.
-4. Render va a detectar el `render.yaml` de la raiz y crear el worker `telegram-rain-alert-bot`.
-5. Completa las variables secretas:
+Variables necesarias:
 
 ```env
+CHECK_INTERVAL_MINUTES=15
+DATA_DIR=/opt/render/project/src/render-data
 WEATHER_API_KEY=tu_weather_api_key
-TELEGRAM_BOT_TOKEN=tu_token
-TELEGRAM_CHAT_ID=tu_chat_id
+RAIN_TELEGRAM_BOT_TOKEN=tu_token_de_lluvia
+RAIN_TELEGRAM_CHAT_ID=tu_chat_id_de_lluvia
 ```
 
 ## Evolucion sugerida
 
-Si despues queres compartir codigo con `SnowBot`, la ruta natural es extraer a una carpeta comun:
-
-- cliente de WeatherAPI
-- cliente de Telegram
-- carga de `.env`
-- almacenamiento de estado
-
-Por ahora `SnowBot` queda intacto y `RainBot` ya nace con esa separacion interna.
+La base comun ya quedo unificada en `src/shared/`, asi que el siguiente paso natural seria compartir tambien helpers de mensajes o reglas si aparecen mas bots.

@@ -1,0 +1,14 @@
+{
+  "name": "weatherbot",
+  "version": "1.0.0",
+  "description": "Worker unico para alertas de nieve y lluvia por Telegram.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "check": "node src/index.js --once",
+    "test-message": "node src/index.js --test-message",
+    "test-snow": "node src/index.js --test-snow",
+    "test-rain": "node src/index.js --test-rain"
+  }
+}

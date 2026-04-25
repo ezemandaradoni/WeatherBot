@@ -77,33 +77,11 @@ Modo continuo:
 node src/index.js
 ```
 
-## Desplegar en Render
+## Render
 
-La opcion mas estable para este bot en Render es un **Background Worker** con **persistent disk**, para conservar `state.json` entre reinicios y despliegues.
+Por ahora este bot no es el deploy activo en Render.
 
-En el monorepo, la configuracion de Render vive en [render.yaml](C:\Users\Ezequiel\Documents\Codex\WeatherBot\render.yaml) y este bot se despliega con `rootDir: SnowBot`.
-
-### Pasos
-
-1. Sube este proyecto a GitHub.
-2. En Render, entra a **New +** > **Blueprint**.
-3. Conecta el repo `WeatherBot`.
-4. Render va a detectar el `render.yaml` de la raiz y crear el worker `telegram-snow-alert-bot`.
-5. Completa las variables secretas:
-
-```env
-WEATHER_API_KEY=tu_weather_api_key
-TELEGRAM_BOT_TOKEN=tu_token
-TELEGRAM_CHAT_ID=tu_chat_id
-```
-
-6. Crea el servicio y espera el primer deploy.
-
-### Notas importantes
-
-- El estado se guarda en el disco persistente montado en `/opt/render/project/src/render-data`.
-- Si cambias `CHECK_INTERVAL_MINUTES`, Render redeploya el worker con el nuevo intervalo.
-- Segun la documentacion oficial de Render, los **background workers** y los **persistent disks** requieren plan pago.
+El `render.yaml` actual apunta a `RainBot` para el viaje. Cuando quieras volver a usar nieve, podemos cambiar ese mismo worker para que apunte otra vez a `SnowBot`.
 
 ## Ideas para mejorarlo
 

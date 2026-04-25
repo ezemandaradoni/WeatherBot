@@ -1,29 +1,5 @@
 services:
   - type: worker
-    name: telegram-snow-alert-bot
-    runtime: node
-    plan: starter
-    region: oregon
-    rootDir: SnowBot
-    buildCommand: npm install
-    startCommand: npm start
-    disk:
-      name: snow-bot-data
-      mountPath: /opt/render/project/src/render-data
-      sizeGB: 1
-    envVars:
-      - key: CHECK_INTERVAL_MINUTES
-        value: "15"
-      - key: DATA_DIR
-        value: /opt/render/project/src/render-data
-      - key: WEATHER_API_KEY
-        sync: false
-      - key: TELEGRAM_BOT_TOKEN
-        sync: false
-      - key: TELEGRAM_CHAT_ID
-        sync: false
-
-  - type: worker
     name: telegram-rain-alert-bot
     runtime: node
     plan: starter
@@ -42,7 +18,7 @@ services:
         value: /opt/render/project/src/render-data
       - key: WEATHER_API_KEY
         sync: false
-      - key: TELEGRAM_BOT_TOKEN
+      - key: RAIN_TELEGRAM_BOT_TOKEN
         sync: false
-      - key: TELEGRAM_CHAT_ID
+      - key: RAIN_TELEGRAM_CHAT_ID
         sync: false
