@@ -81,14 +81,14 @@ node src/index.js
 
 La opcion mas estable para este bot en Render es un **Background Worker** con **persistent disk**, para conservar `state.json` entre reinicios y despliegues.
 
-El repo ya incluye [render.yaml](C:/Users/Ezequiel/Documents/New%20project/render.yaml) con esa configuracion.
+En el monorepo, la configuracion de Render vive en [render.yaml](C:\Users\Ezequiel\Documents\Codex\WeatherBot\render.yaml) y este bot se despliega con `rootDir: SnowBot`.
 
 ### Pasos
 
 1. Sube este proyecto a GitHub.
 2. En Render, entra a **New +** > **Blueprint**.
-3. Conecta tu repo y selecciona este proyecto.
-4. Render va a detectar `render.yaml` y crear el worker `telegram-snow-alert-bot`.
+3. Conecta el repo `WeatherBot`.
+4. Render va a detectar el `render.yaml` de la raiz y crear el worker `telegram-snow-alert-bot`.
 5. Completa las variables secretas:
 
 ```env

@@ -77,14 +77,14 @@ node src/index.js
 
 ## Desplegar en Render
 
-El repo incluye `render.yaml` con una configuracion de `Background Worker` y disco persistente.
+En el monorepo, la configuracion de Render vive en [render.yaml](C:\Users\Ezequiel\Documents\Codex\WeatherBot\render.yaml) y este bot se despliega con `rootDir: RainBot`.
 
 ### Pasos
 
 1. Sube este proyecto a GitHub.
 2. En Render, entra a **New +** > **Blueprint**.
-3. Conecta tu repo y selecciona este proyecto.
-4. Render va a detectar `render.yaml` y crear el worker `telegram-rain-alert-bot`.
+3. Conecta el repo `WeatherBot`.
+4. Render va a detectar el `render.yaml` de la raiz y crear el worker `telegram-rain-alert-bot`.
 5. Completa las variables secretas:
 
 ```env
