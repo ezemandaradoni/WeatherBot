@@ -36,10 +36,16 @@ export async function startRainBot(options = {}) {
   const runOnce = Boolean(options.runOnce);
   const forceMessage = Boolean(options.forceMessage);
   const testMessage = Boolean(options.testMessage);
+  const mockRainLocationKey = options.mockRainLocationKey ?? null;
 
   if (testMessage) {
     await sendTelegramMessage(config, buildTestTelegramMessage());
     console.log("[rain-bot] Mensaje de prueba enviado por Telegram");
+    return;
+  }
+
+  if (mockRainLocationKey) {
+    await runMockRainScenario(config, stateStore, mockRainLocationKey);
     return;
   }
 
@@ -99,6 +105,40 @@ async function checkLocations(config, stateStore, options = {}) {
     }
   }
 
+  await stateStore.write(state);
+}
+
+async function runMockRainScenario(config, stateStore, locationKey) {
+  const location = LOCATIONS.find((entry) => entry.key === locationKey);
+  if (!location) {
+    throw new Error(`Ubicacion no reconocida para mock: ${locationKey}`);
+  }
+
+  const state = await stateStore.read();
+  const locationState = state[location.key] ?? {
+    sentForecastSlots: {},
+    sentAlertKeys: [],
+    lastNextHourRainKey: null,
+    isRainingNow: false
+  };
+  const weather = buildMockWeather(location);
+  const events = analyzeForecast(weather);
+
+  logWeather(location, events.summary);
+
+  await notifyTomorrowSlots(config, location, locationState, events.tomorrowSlots, true);
+  await notifyNextHourRain(config, location, locationState, events.nextHourRain, true);
+  await notifyCurrentRain(
+    config,
+    location,
+    locationState,
+    weather,
+    events.currentRainStopHour,
+    events.isRainingNow,
+    true
+  );
+
+  state[location.key] = buildNextLocationState(locationState, weather, events);
   await stateStore.write(state);
 }
 
@@ -261,4 +301,85 @@ function buildNextLocationState(previousState, weather, events) {
     temperature: weather.current?.temp_c,
     precipitationMm: weather.current?.precip_mm
   };
+}
+
+function buildMockWeather(location) {
+  const now = new Date();
+  const nowEpoch = Math.floor(now.getTime() / 1000);
+  const currentHour = new Date(now);
+  currentHour.setMinutes(0, 0, 0);
+
+  const nextHour = new Date(currentHour.getTime() + 60 * 60 * 1000);
+  const stopHour = new Date(currentHour.getTime() + 2 * 60 * 60 * 1000);
+  const tomorrow10 = new Date(currentHour);
+  tomorrow10.setDate(tomorrow10.getDate() + 1);
+  tomorrow10.setHours(10, 0, 0, 0);
+  const tomorrow22 = new Date(currentHour);
+  tomorrow22.setDate(tomorrow22.getDate() + 1);
+  tomorrow22.setHours(22, 0, 0, 0);
+
+  return {
+    location: {
+      name: location.name,
+      localtime: toLocalTimeString(now),
+      localtime_epoch: nowEpoch
+    },
+    current: {
+      temp_c: 27.4,
+      precip_mm: 2.8,
+      humidity: 88,
+      condition: {
+        code: 1183,
+        text: "Light rain"
+      }
+    },
+    forecast: {
+      forecastday: [
+        {
+          date: toDateString(currentHour),
+          hour: [
+            buildMockHour(currentHour, { chanceOfRain: 70, precipMm: 0.5, text: "Patchy rain nearby", code: 1063 }),
+            buildMockHour(nextHour, { chanceOfRain: 95, precipMm: 3.2, text: "Moderate rain", code: 1186 }),
+            buildMockHour(stopHour, { chanceOfRain: 10, precipMm: 0, text: "Cloudy", code: 1006 })
+          ]
+        },
+        {
+          date: toDateString(tomorrow10),
+          hour: [
+            buildMockHour(tomorrow10, { chanceOfRain: 84, precipMm: 1.6, text: "Light rain shower", code: 1240 }),
+            buildMockHour(tomorrow22, { chanceOfRain: 91, precipMm: 4.1, text: "Moderate rain", code: 1189 })
+          ]
+        }
+      ]
+    },
+    alerts: {
+      alert: []
+    }
+  };
+}
+
+function buildMockHour(date, options) {
+  const time = toLocalTimeString(date);
+  return {
+    time,
+    time_epoch: Math.floor(date.getTime() / 1000),
+    chance_of_rain: options.chanceOfRain,
+    will_it_rain: options.chanceOfRain >= 50 ? 1 : 0,
+    precip_mm: options.precipMm,
+    condition: {
+      text: options.text,
+      code: options.code
+    }
+  };
+}
+
+function toDateString(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function toLocalTimeString(date) {
+  return `${toDateString(date)} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
