@@ -37,12 +37,12 @@ export function buildTomorrowRainMessage(location, slotLabel, forecastHour) {
   const conditionText = escapeTelegramMarkdown(forecastHour.condition?.text ?? "Sin detalle");
 
   return [
-    `*Lluvia anunciada en ${locationName} para manana ${slotLabel}*`,
+    `🌧️ *Lluvia anunciada en ${locationName} para manana ${slotLabel}*`,
     "",
-    `Hora del pronostico: \`${timeLabel}\``,
-    `Probabilidad: *${chanceOfRain}%*`,
-    `Precipitacion estimada: *${precipitation} mm*`,
-    `Condicion: *${conditionText}*`
+    `🕒 Hora del pronostico: \`${timeLabel}\``,
+    `📊 Probabilidad: *${chanceOfRain}%*`,
+    `💧 Precipitacion estimada: *${precipitation} mm*`,
+    `☁️ Condicion: *${conditionText}*`
   ].join("\n");
 }
 
@@ -54,13 +54,13 @@ export function buildNextHourRainMessage(location, forecastHour) {
   const conditionText = escapeTelegramMarkdown(forecastHour.condition?.text ?? "Sin detalle");
 
   return [
-    `*Lluvia inminente en ${locationName}*`,
+    `⏳ *Lluvia inminente en ${locationName}*`,
     "",
-    `Lluvia prevista dentro de la proxima hora`,
-    `Hora estimada: \`${timeLabel}\``,
-    `Probabilidad: *${chanceOfRain}%*`,
-    `Precipitacion estimada: *${precipitation} mm*`,
-    `Condicion: *${conditionText}*`
+    `🌧️ Lluvia prevista dentro de la proxima hora`,
+    `🕒 Hora estimada: \`${timeLabel}\``,
+    `📊 Probabilidad: *${chanceOfRain}%*`,
+    `💧 Precipitacion estimada: *${precipitation} mm*`,
+    `☁️ Condicion: *${conditionText}*`
   ].join("\n");
 }
 
@@ -76,19 +76,19 @@ export function buildCurrentRainMessage(location, weather, stopForecastHour) {
   );
 
   const lines = [
-    `*Esta lloviendo ahora en ${locationName}*`,
+    `🌧️ *Esta lloviendo ahora en ${locationName}*`,
     "",
-    `Temperatura: *${temperature} C*`,
-    `Condicion actual: *${conditionText}*`,
-    `Lluvia actual: *${precipitation} mm*`,
-    `Humedad: *${humidity}%*`,
-    `Hora del reporte: \`${reportTime}\``
+    `🌡️ Temperatura: *${temperature} C*`,
+    `☁️ Condicion actual: *${conditionText}*`,
+    `💧 Lluvia actual: *${precipitation} mm*`,
+    `💦 Humedad: *${humidity}%*`,
+    `🕒 Hora del reporte: \`${reportTime}\``
   ];
 
   if (stopForecastHour) {
-    lines.push(`Se estima que afloje o pare cerca de: \`${escapeTelegramMarkdown(stopForecastHour.time ?? "")}\``);
+    lines.push(`🛑 Se estima que afloje o pare cerca de: \`${escapeTelegramMarkdown(stopForecastHour.time ?? "")}\``);
   } else {
-    lines.push("No aparece un corte claro de lluvia en las proximas horas.");
+    lines.push("🌀 No aparece un corte claro de lluvia en las proximas horas.");
   }
 
   return lines.join("\n");
@@ -103,13 +103,13 @@ export function buildImportantAlertMessage(location, alert) {
   const expires = escapeTelegramMarkdown(alert.expires ?? "Sin hora de cierre");
 
   return [
-    `*Alerta importante para ${locationName}*`,
+    `🚨 *Alerta importante para ${locationName}*`,
     "",
-    `Titulo: *${headline}*`,
-    `Evento: *${eventName}*`,
-    `Severidad: *${severity}*`,
-    `Urgencia: *${urgency}*`,
-    `Expira: \`${expires}\``
+    `📰 Titulo: *${headline}*`,
+    `📍 Evento: *${eventName}*`,
+    `⚠️ Severidad: *${severity}*`,
+    `⏱️ Urgencia: *${urgency}*`,
+    `🕒 Expira: \`${expires}\``
   ].join("\n");
 }
 
@@ -117,10 +117,10 @@ export function buildTestTelegramMessage() {
   const reportTime = escapeTelegramMarkdown(new Date().toISOString());
 
   return [
-    "*RainBot test message*",
+    "🧪 *RainBot test message*",
     "",
-    "Telegram is configured correctly",
-    `Time: \`${reportTime}\``
+    "✅ Telegram is configured correctly",
+    `🕒 Time: \`${reportTime}\``
   ].join("\n");
 }
 
