@@ -1,0 +1,12 @@
+{
+  "name": "telegram-rain-alert-bot",
+  "version": "1.0.0",
+  "description": "Envia un mensaje de Telegram cuando empieza a llover en Buzios o Ilha Grande.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "check": "node src/index.js --once",
+    "test-message": "node src/index.js --test-message"
+  }
+}

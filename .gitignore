@@ -1,0 +1,11 @@
+node_modules/
+*/node_modules/
+.DS_Store
+
+SnowBot/.env
+RainBot/.env
+
+SnowBot/data/
+RainBot/data/
+
+*.log
