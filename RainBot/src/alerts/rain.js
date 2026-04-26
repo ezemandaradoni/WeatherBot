@@ -37,7 +37,7 @@ export function buildTomorrowRainMessage(location, slotLabel, forecastHour) {
   const conditionText = escapeTelegramMarkdown(forecastHour.condition?.text ?? "Sin detalle");
 
   return [
-    `🌧️ *Lluvia anunciada en ${locationName} para manana ${slotLabel}*`,
+    `🌧️ *Lluvia anunciada en ${locationName} para mañana ${slotLabel}*`,
     "",
     `🕒 Hora del pronostico: \`${timeLabel}\``,
     `📊 Probabilidad: *${chanceOfRain}%*`,

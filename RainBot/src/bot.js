@@ -162,8 +162,8 @@ function analyzeForecast(weather) {
     nextHourRain: isRainingNow ? null : nextHourRain,
     importantAlerts,
     tomorrowSlots: [
-      buildTomorrowSlot("manana 10:00", tomorrow10),
-      buildTomorrowSlot("manana 22:00", tomorrow22)
+      buildTomorrowSlot("10:00", tomorrow10),
+      buildTomorrowSlot("22:00", tomorrow22)
     ].filter(Boolean),
     summary: {
       isRainingNow,
