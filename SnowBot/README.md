@@ -5,7 +5,7 @@ Este proyecto revisa si esta nevando en:
 - Cerro Chapelco
 - Cerro Catedral
 
-Cuando detecta que **empieza** a nevar en una ciudad, manda un mensaje de Telegram y evita repetirlo mientras la nevada siga activa.
+Cuando detecta que **empieza** a nevar en un centro de ski, manda un mensaje de Telegram y evita repetirlo mientras la nevada siga activa.
 
 Ejemplo de alerta:
 
@@ -41,11 +41,11 @@ CHECK_INTERVAL_MINUTES=15
 DATA_DIR=./data
 
 WEATHER_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TELEGRAM_BOT_TOKEN=123456789:AAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TELEGRAM_CHAT_ID=123456789
+SNOW_TELEGRAM_BOT_TOKEN=123456789:AAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+SNOW_TELEGRAM_CHAT_ID=123456789
 ```
 
-## Como obtener el `TELEGRAM_CHAT_ID`
+## Como obtener el `SNOW_TELEGRAM_CHAT_ID`
 
 1. Crea un bot con `@BotFather` y guarda el token.
 2. Mandale un mensaje a tu bot desde la cuenta o grupo donde quieras recibir alertas.
@@ -79,9 +79,19 @@ node src/index.js
 
 ## Render
 
-Por ahora este bot no es el deploy activo en Render.
+Este bot es el deploy activo del monorepo en Render.
 
-El `render.yaml` actual apunta a `RainBot` para el viaje. Cuando quieras volver a usar nieve, podemos cambiar ese mismo worker para que apunte otra vez a `SnowBot`.
+El `render.yaml` actual apunta a `SnowBot`.
+
+Variables necesarias:
+
+```env
+CHECK_INTERVAL_MINUTES=15
+DATA_DIR=/opt/render/project/src/render-data
+WEATHER_API_KEY=tu_weather_api_key
+SNOW_TELEGRAM_BOT_TOKEN=tu_token_de_nieve
+SNOW_TELEGRAM_CHAT_ID=tu_chat_id_de_nieve
+```
 
 ## Ideas para mejorarlo
 
