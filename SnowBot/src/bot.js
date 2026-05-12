@@ -6,7 +6,7 @@ import { LOCATIONS } from "./locations.js";
 import { loadBotConfig } from "../../src/shared/config.js";
 import { createStateStore } from "../../src/shared/state-store.js";
 import { sendTelegramMessage } from "../../src/shared/telegram.js";
-import { fetchCurrentWeatherForLocation } from "../../src/shared/weather-api.js";
+import { fetchForecastWeatherForLocation } from "../../src/shared/weather-api.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,10 +59,14 @@ async function checkLocations(config, stateStore, options = {}) {
 
   for (const location of LOCATIONS) {
     try {
-      const weather = await fetchCurrentWeatherForLocation(
+      const weather = await fetchForecastWeatherForLocation(
         location,
         config.weatherApiKey,
-        "snow-bot"
+        "snow-bot",
+        {
+          days: 1,
+          alerts: false
+        }
       );
       const wasSnowing = Boolean(state[location.key]?.isSnowing);
       const isSnowing = detectSnow(weather);

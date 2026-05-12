@@ -15,18 +15,24 @@ export function buildSnowMessage(location, weather) {
   const temperature = escapeTelegramMarkdown(formatNumber(current.temp_c));
   const conditionText = escapeTelegramMarkdown(current.condition?.text ?? "Sin detalle");
   const humidity = escapeTelegramMarkdown(String(current.humidity ?? ""));
+  const currentSnowCm = escapeTelegramMarkdown(formatNumber(current.snow_cm));
+  const todaySnowCm = escapeTelegramMarkdown(formatNumber(getTodayTotalSnowCm(weather)));
+  const precipitationMm = escapeTelegramMarkdown(formatNumber(current.precip_mm));
   const locationName = escapeTelegramMarkdown(location.name);
   const reportTime = escapeTelegramMarkdown(
     weather.location?.localtime ?? new Date().toISOString()
   );
 
   return [
-    `*Nieve detectada en ${locationName}*`,
+    `❄️ *Nieve detectada en ${locationName}*`,
     "",
-    `Temperatura: *${temperature} C*`,
-    `Condicion: *${conditionText}*`,
-    `Humedad: *${humidity}%*`,
-    `Hora del reporte: \`${reportTime}\``
+    `🌡️ Temperatura: *${temperature} C*`,
+    `🌨️ Condicion: *${conditionText}*`,
+    `🏔️ Nieve actual: *${currentSnowCm} cm*`,
+    `📏 Nieve acumulada hoy: *${todaySnowCm} cm*`,
+    `💧 Precipitacion actual: *${precipitationMm} mm*`,
+    `💦 Humedad: *${humidity}%*`,
+    `🕒 Hora del reporte: \`${reportTime}\``
   ].join("\n");
 }
 
@@ -34,10 +40,10 @@ export function buildTestTelegramMessage() {
   const reportTime = escapeTelegramMarkdown(new Date().toISOString());
 
   return [
-    "*Mensaje de prueba de SnowBot*",
+    "❄️ *Mensaje de prueba de SnowBot*",
     "",
-    "Telegram quedo configurado correctamente",
-    `Hora: \`${reportTime}\``
+    "✅ Telegram quedo configurado correctamente",
+    `🕒 Hora: \`${reportTime}\``
   ].join("\n");
 }
 
@@ -51,6 +57,10 @@ export function logWeather(location, weather, isSnowing) {
 function formatNumber(value) {
   const number = Number(value ?? 0);
   return Number.isFinite(number) ? number.toFixed(1) : "0.0";
+}
+
+function getTodayTotalSnowCm(weather) {
+  return weather.forecast?.forecastday?.[0]?.day?.totalsnow_cm ?? 0;
 }
 
 function escapeTelegramMarkdown(value) {

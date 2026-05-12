@@ -7,22 +7,27 @@ Este proyecto revisa si esta nevando en:
 
 Cuando detecta que **empieza** a nevar en un centro de ski, manda un mensaje de Telegram y evita repetirlo mientras la nevada siga activa.
 
+El mensaje incluye la nieve actual y la nieve acumulada del dia segun WeatherAPI. No reemplaza el parte oficial de pistas del centro de ski.
+
 Ejemplo de alerta:
 
 ```text
-❄️ Nieve detectada en Bariloche
+❄️ Nieve detectada en Cerro Catedral
 
 🌡️ Temperatura: -1.2 C
-🌨️ Nieve actual: 0.8 mm
+🌨️ Condicion: Moderate snow
+🏔️ Nieve actual: 0.8 cm
+📏 Nieve acumulada hoy: 4.2 cm
 💧 Precipitacion actual: 1.0 mm
+💦 Humedad: 91%
 🕒 Hora del reporte: 2026-04-25T08:00
 ```
 
 ## Como funciona
 
-1. Consulta el clima actual en WeatherAPI.
+1. Consulta el pronostico de 1 dia en WeatherAPI, incluyendo clima actual.
 2. Revisa la condicion actual y el codigo meteorologico.
-3. Si una ciudad pasa de "sin nieve" a "con nieve", envia un mensaje por Telegram.
+3. Si un centro de ski pasa de "sin nieve" a "con nieve", envia un mensaje por Telegram.
 4. Guarda el ultimo estado en `data/state.json`.
 
 ## Requisitos
@@ -95,7 +100,7 @@ SNOW_TELEGRAM_CHAT_ID=tu_chat_id_de_nieve
 
 ## Ideas para mejorarlo
 
-- Agregar mas ciudades
+- Agregar mas centros de ski
 - Enviar tambien cuando deje de nevar
 - Usar pronostico horario para anticipar nieve
-- Desplegarlo en un VPS o en Railway/Render para que quede siempre prendido
+- Integrar un parte oficial de pistas si el centro de ski publica una fuente estable
