@@ -2,8 +2,8 @@
 
 Este proyecto revisa si esta nevando en:
 
-- San Martin de los Andes
-- Bariloche
+- Cerro Chapelco
+- Cerro Catedral
 
 Cuando detecta que **empieza** a nevar en una ciudad, manda un mensaje de Telegram y evita repetirlo mientras la nevada siga activa.
 

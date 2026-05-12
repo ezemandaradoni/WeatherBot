@@ -1,14 +1,14 @@
 export const LOCATIONS = [
   {
-    key: "san-martin-de-los-andes",
-    name: "San Martin de los Andes",
-    latitude: -40.1579,
-    longitude: -71.3534
+    key: "cerro-chapelco",
+    name: "Cerro Chapelco",
+    latitude: -40.2272,
+    longitude: -71.2548
   },
   {
-    key: "bariloche",
-    name: "Bariloche",
-    latitude: -41.1335,
-    longitude: -71.3103
+    key: "cerro-catedral",
+    name: "Cerro Catedral",
+    latitude: -41.1833,
+    longitude: -71.45
   }
 ];
