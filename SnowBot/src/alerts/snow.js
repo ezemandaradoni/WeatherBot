@@ -7,16 +7,24 @@ export function detectSnow(weather) {
   const current = weather.current ?? {};
   const weatherCode = Number(current.condition?.code);
   const conditionText = String(current.condition?.text ?? "").toLowerCase();
-  return WEATHER_API_SNOW_CODES.has(weatherCode) || conditionText.includes("snow");
+  const { currentSnowCm, todaySnowCm } = getSnowMetrics(weather);
+
+  return (
+    WEATHER_API_SNOW_CODES.has(weatherCode) ||
+    conditionText.includes("snow") ||
+    currentSnowCm > 0 ||
+    todaySnowCm > 0
+  );
 }
 
 export function buildSnowMessage(location, weather) {
   const current = weather.current ?? {};
+  const { currentSnowCm, todaySnowCm } = getSnowMetrics(weather);
   const temperature = escapeTelegramMarkdown(formatNumber(current.temp_c));
   const conditionText = escapeTelegramMarkdown(current.condition?.text ?? "Sin detalle");
   const humidity = escapeTelegramMarkdown(String(current.humidity ?? ""));
-  const currentSnowCm = escapeTelegramMarkdown(formatNumber(current.snow_cm));
-  const todaySnowCm = escapeTelegramMarkdown(formatNumber(getTodayTotalSnowCm(weather)));
+  const currentSnowCmLabel = escapeTelegramMarkdown(formatNumber(currentSnowCm));
+  const todaySnowCmLabel = escapeTelegramMarkdown(formatNumber(todaySnowCm));
   const precipitationMm = escapeTelegramMarkdown(formatNumber(current.precip_mm));
   const locationName = escapeTelegramMarkdown(location.name);
   const reportTime = escapeTelegramMarkdown(
@@ -28,8 +36,8 @@ export function buildSnowMessage(location, weather) {
     "",
     `🌡️ Temperatura: *${temperature} C*`,
     `🌨️ Condicion: *${conditionText}*`,
-    `🏔️ Nieve actual: *${currentSnowCm} cm*`,
-    `📏 Nieve acumulada hoy: *${todaySnowCm} cm*`,
+    `🏔️ Nieve actual: *${currentSnowCmLabel} cm*`,
+    `📏 Nieve acumulada hoy: *${todaySnowCmLabel} cm*`,
     `💧 Precipitacion actual: *${precipitationMm} mm*`,
     `💦 Humedad: *${humidity}%*`,
     `🕒 Hora del reporte: \`${reportTime}\``
@@ -49,18 +57,27 @@ export function buildTestTelegramMessage() {
 
 export function logWeather(location, weather, isSnowing) {
   const current = weather.current ?? {};
+  const { currentSnowCm, todaySnowCm } = getSnowMetrics(weather);
   console.log(
-    `[snow-bot] ${location.name}: code=${current.condition?.code}, temp=${current.temp_c}C, condition=${current.condition?.text}, snowing=${isSnowing}`
+    `[snow-bot] ${location.name}: code=${current.condition?.code}, temp=${current.temp_c}C, condition=${current.condition?.text}, currentSnowCm=${currentSnowCm}, todaySnowCm=${todaySnowCm}, snowing=${isSnowing}`
   );
 }
 
 function formatNumber(value) {
-  const number = Number(value ?? 0);
+  const number = toFiniteNumber(value);
   return Number.isFinite(number) ? number.toFixed(1) : "0.0";
 }
 
-function getTodayTotalSnowCm(weather) {
-  return weather.forecast?.forecastday?.[0]?.day?.totalsnow_cm ?? 0;
+function getSnowMetrics(weather) {
+  return {
+    currentSnowCm: toFiniteNumber(weather.current?.snow_cm),
+    todaySnowCm: toFiniteNumber(weather.forecast?.forecastday?.[0]?.day?.totalsnow_cm)
+  };
+}
+
+function toFiniteNumber(value) {
+  const number = Number(value ?? 0);
+  return Number.isFinite(number) ? number : 0;
 }
 
 function escapeTelegramMarkdown(value) {

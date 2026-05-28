@@ -26,8 +26,8 @@ Ejemplo de alerta:
 ## Como funciona
 
 1. Consulta el pronostico de 1 dia en WeatherAPI, incluyendo clima actual.
-2. Revisa la condicion actual y el codigo meteorologico.
-3. Si un centro de ski pasa de "sin nieve" a "con nieve", envia un mensaje por Telegram.
+2. Revisa la condicion actual, el codigo meteorologico y los centimetros de nieve reportados por WeatherAPI.
+3. Si un centro de ski pasa de "sin nieve" a "con nieve" o WeatherAPI informa nieve para el dia, envia un mensaje por Telegram.
 4. Guarda el ultimo estado en `data/state.json`.
 
 ## Requisitos
