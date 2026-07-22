@@ -4,6 +4,7 @@ Este proyecto revisa si esta nevando en:
 
 - Cerro Chapelco
 - Cerro Catedral
+- Cerro Las Lenas
 
 Cuando detecta que **empieza** a nevar en un centro de ski, manda un mensaje de Telegram y evita repetirlo mientras la nevada siga activa.
 

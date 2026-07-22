@@ -10,5 +10,11 @@ export const LOCATIONS = [
     name: "Cerro Catedral",
     latitude: -41.1833,
     longitude: -71.45
+  },
+  {
+    key: "cerro-las-lenas",
+    name: "Cerro Las Lenas",
+    latitude: -35.1467,
+    longitude: -70.0801
   }
 ];
