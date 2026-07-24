@@ -6,7 +6,7 @@ Este proyecto revisa si esta nevando en:
 - Cerro Catedral
 - Cerro Las Lenas
 
-Cuando detecta que **empieza** a nevar en un centro de ski, manda un mensaje de Telegram y evita repetirlo mientras la nevada siga activa.
+Cuando detecta que **empieza** a nevar en un centro de ski, manda un mensaje de Telegram. Si la nevada sigue activa, vuelve a mandar recordatorios cada 6 horas por defecto.
 
 El mensaje incluye la nieve actual y la nieve acumulada del dia segun WeatherAPI. No reemplaza el parte oficial de pistas del centro de ski.
 
@@ -44,6 +44,7 @@ Ejemplo de alerta:
 
 ```env
 CHECK_INTERVAL_MINUTES=15
+SNOW_REMINDER_INTERVAL_HOURS=6
 DATA_DIR=./data
 
 WEATHER_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -93,6 +94,7 @@ Variables necesarias:
 
 ```env
 CHECK_INTERVAL_MINUTES=15
+SNOW_REMINDER_INTERVAL_HOURS=6
 DATA_DIR=/opt/render/project/src/render-data
 WEATHER_API_KEY=tu_weather_api_key
 SNOW_TELEGRAM_BOT_TOKEN=tu_token_de_nieve

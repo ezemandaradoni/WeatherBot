@@ -67,7 +67,8 @@ export async function loadBotConfig(options) {
     weatherApiKey,
     telegramBotToken,
     telegramChatId,
-    statePath: path.join(path.resolve(dataDir), stateFilename)
+    statePath: path.join(path.resolve(dataDir), stateFilename),
+    rawEnv: env
   };
 }
 

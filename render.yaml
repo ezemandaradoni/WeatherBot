@@ -14,6 +14,8 @@ services:
     envVars:
       - key: CHECK_INTERVAL_MINUTES
         value: "15"
+      - key: SNOW_REMINDER_INTERVAL_HOURS
+        value: "6"
       - key: DATA_DIR
         value: /opt/render/project/src/render-data
       - key: WEATHER_API_KEY

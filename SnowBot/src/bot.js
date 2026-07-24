@@ -12,6 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const botDir = path.resolve(__dirname, "..");
 const monorepoRoot = path.resolve(botDir, "..");
+const DEFAULT_REMINDER_INTERVAL_HOURS = 6;
 
 export async function startSnowBot(options = {}) {
   const config = await loadBotConfig({
@@ -21,6 +22,10 @@ export async function startSnowBot(options = {}) {
     defaultStateFilename: "snow-state.json",
     genericTelegramFallback: true
   });
+  config.reminderIntervalHours = getPositiveNumber(
+    readEnvValue(config.rawEnv, ["SNOW_REMINDER_INTERVAL_HOURS", "REMINDER_INTERVAL_HOURS"]),
+    DEFAULT_REMINDER_INTERVAL_HOURS
+  );
 
   const stateStore = createStateStore(config.statePath);
   const runOnce = Boolean(options.runOnce);
@@ -39,7 +44,7 @@ export async function startSnowBot(options = {}) {
   }
 
   console.log(
-    `[snow-bot] Monitoreando nieve cada ${config.checkIntervalMinutes} minutos en ${LOCATIONS.map((location) => location.name).join(", ")}`
+    `[snow-bot] Monitoreando nieve cada ${config.checkIntervalMinutes} minutos en ${LOCATIONS.map((location) => location.name).join(", ")}. Recordatorios cada ${config.reminderIntervalHours} horas mientras siga nevando.`
   );
 
   await checkLocations(config, stateStore, { forceMessage });
@@ -68,12 +73,18 @@ async function checkLocations(config, stateStore, options = {}) {
           alerts: false
         }
       );
-      const wasSnowing = Boolean(state[location.key]?.isSnowing);
+      const locationState = state[location.key] ?? {};
+      const wasSnowing = Boolean(locationState.isSnowing);
       const isSnowing = detectSnow(weather);
+      const shouldNotify =
+        forceMessage ||
+        (isSnowing &&
+          (!wasSnowing ||
+            shouldSendSnowReminder(locationState.lastNotificationAt, config.reminderIntervalHours)));
 
       logWeather(location, weather, isSnowing);
 
-      if ((isSnowing && !wasSnowing) || forceMessage) {
+      if (shouldNotify) {
         const message = buildSnowMessage(location, weather);
         await sendTelegramMessage(config, message);
         console.log(`[snow-bot] Aviso enviado por Telegram para ${location.name}`);
@@ -82,6 +93,11 @@ async function checkLocations(config, stateStore, options = {}) {
       state[location.key] = {
         isSnowing,
         updatedAt: new Date().toISOString(),
+        lastNotificationAt: shouldNotify
+          ? new Date().toISOString()
+          : isSnowing
+            ? locationState.lastNotificationAt ?? null
+            : null,
         weatherCode: weather.current?.condition?.code,
         temperature: weather.current?.temp_c
       };
@@ -91,4 +107,37 @@ async function checkLocations(config, stateStore, options = {}) {
   }
 
   await stateStore.write(state);
+}
+
+function shouldSendSnowReminder(lastNotificationAt, reminderIntervalHours) {
+  if (!lastNotificationAt) {
+    return true;
+  }
+
+  const lastNotificationTime = new Date(lastNotificationAt).getTime();
+  if (!Number.isFinite(lastNotificationTime)) {
+    return true;
+  }
+
+  const elapsedMs = Date.now() - lastNotificationTime;
+  return elapsedMs >= reminderIntervalHours * 60 * 60 * 1000;
+}
+
+function readEnvValue(env, keys) {
+  for (const key of keys) {
+    if (env[key]) {
+      return env[key];
+    }
+  }
+
+  return undefined;
+}
+
+function getPositiveNumber(value, fallback) {
+  const parsed = Number.parseFloat(value ?? "");
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return fallback;
+  }
+
+  return parsed;
 }
