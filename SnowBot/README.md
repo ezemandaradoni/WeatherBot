@@ -8,7 +8,7 @@ Este proyecto revisa si esta nevando en:
 
 Cuando detecta que **empieza** a nevar en un centro de ski, manda un mensaje de Telegram. Si la nevada sigue activa, vuelve a mandar recordatorios cada 6 horas por defecto.
 
-El mensaje incluye la nieve actual y la nieve acumulada del dia segun WeatherAPI. No reemplaza el parte oficial de pistas del centro de ski.
+El mensaje incluye la nieve estimada para la hora actual y la nieve acumulada del dia segun WeatherAPI. No reemplaza el parte oficial de pistas del centro de ski.
 
 Ejemplo de alerta:
 
@@ -17,7 +17,7 @@ Ejemplo de alerta:
 
 🌡️ Temperatura: -1.2 C
 🌨️ Condicion: Moderate snow
-🏔️ Nieve actual: 0.8 cm
+🏔️ Nieve estimada esta hora: 0.8 cm
 📏 Nieve acumulada hoy: 4.2 cm
 💧 Precipitacion actual: 1.0 mm
 💦 Humedad: 91%
@@ -26,10 +26,11 @@ Ejemplo de alerta:
 
 ## Como funciona
 
-1. Consulta el pronostico de 1 dia en WeatherAPI, incluyendo clima actual.
+1. Consulta el pronostico de 1 dia en WeatherAPI, incluyendo clima actual y pronostico horario.
 2. Revisa la condicion actual, el codigo meteorologico y los centimetros de nieve reportados por WeatherAPI.
 3. Si un centro de ski pasa de "sin nieve" a "con nieve" o WeatherAPI informa nieve para el dia, envia un mensaje por Telegram.
-4. Guarda el ultimo estado en `data/state.json`.
+4. Si la nevada sigue activa, envia un recordatorio cuando pasan `SNOW_REMINDER_INTERVAL_HOURS` desde el ultimo mensaje.
+5. Guarda el ultimo estado en `data/state.json`.
 
 ## Requisitos
 
